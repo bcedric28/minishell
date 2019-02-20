@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-char	**g_env = 0;
+char		**g_env = 0;
 
 void	exit_shell(void)
 {
@@ -32,7 +31,7 @@ static int		len_env(char **env)
 	return (len);
 }
 
-void			create_g_env(int argc, char **argv, char **env)
+void			create_g_env(char **env)
 {
 	int		i;
 
@@ -61,8 +60,9 @@ void	display_name(void)
 
 int main(int argc, char **argv, char **env)
 {
-	int i = 0;
-	create_g_env(argc, argv, env);
+	argc = 1;
+	argv[0] = "a";
+	create_g_env(env);
 	while(1)
 	{
 		display_name();
