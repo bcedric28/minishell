@@ -70,12 +70,20 @@ void		display_name(void)
 	ft_putstr("-> \033[0m");
 }
 
-int	execute_commands(char *execute)
+int	execute_commands(char *execute, char **execute_path)
 {
-	
+	pid_t	pid;
+
+	pid = fork();
+	if(pid == 0)
+		execve(execute, execute_path, g_env);
+	else if (pid < 0)
+		return (-1);
+	wait(&pid);
+	return(1);
 }
 
-int	track_path(char **path, char *excve)
+int	track_path(char **path, char **excve)
 {
 	int i;
 	struct stat file;
@@ -84,11 +92,9 @@ int	track_path(char **path, char *excve)
 	while(path[i])
 	{
 		path[i] = ft_strjoin(path[i], "/");
-		path[i] = ft_strjoin(path[i], excve);
+		path[i] = ft_strjoin(path[i], excve[0]);
 		if (lstat(path[i], &file) == 0)
-		{
-			execute_commands(path[i]);
-		}
+			return(execute_commands(path[i], excve));
 		i++;
 	}
 	return (0);
@@ -105,9 +111,11 @@ void	main_commands(char *excve)
 	int i;
 	int j;
 	char **path;
+	char **execute_path;
 
 	i = 0;
 	j = 0;
+	execute_path = ft_strsplit_space(excve);
 	while(g_env[i])
 	{
 		j = 0;
@@ -115,7 +123,7 @@ void	main_commands(char *excve)
 		{
 			path = ft_strsplit(g_env[i], ':');
 			path[0] = ft_strsub(path[0], 5, ft_strlen(path[0]));
-			if (track_path(path, excve) == 0)
+			if (track_path(path, execute_path) == 0)
 				ft_error(excve);
 		}
 		i++;
