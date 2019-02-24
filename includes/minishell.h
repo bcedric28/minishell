@@ -15,6 +15,8 @@
 
 # include "../Libft/includes/libft.h"
 # include <stdio.h>
+# include <stdlib.h>
+# include <sys/stat.h>
 
 extern	char **g_env;
 

@@ -13,7 +13,7 @@
 
 NAME = minishell
 
-FLAG = -Wall -Wextra -Werror
+FLAG = -Wall -Wextra
 
 SOURCE = minishell.c
 
