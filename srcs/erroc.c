@@ -12,6 +12,10 @@
 
 #include	"minishell.h"
 
+/*
+**LEAK OK
+*/
+
 void	ft_error(char *excve, int i)
 {
 	if (i == 1)

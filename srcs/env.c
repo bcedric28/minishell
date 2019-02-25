@@ -12,6 +12,10 @@
 
 #include	"minishell.h"
 
+/*
+**PROBLEME DE LEAK
+*/
+
 void	delete_env(int pos)
 {
 	int i;
@@ -68,24 +72,25 @@ void		unsetenv_builtin(char *unsetenv)
 	int j;
 	char **copy;
 
-	copy = split_and_delete();
+	copy = NULL;
 	tab = ft_strsplit_space(unsetenv);
 	if(tab[1] == NULL)
-	{
 		ft_putendl("unsetenv: Too few arguments.");
-		return ;
-	}
-	j = 1;
-	while(tab[j])
+	else
 	{
-		i = 0;
-		while(copy[i])
+		j = 1;
+		while(tab[j])
 		{
-			if (ft_strequ(copy[i], tab[j]))
-				delete_env(i);
-			i++;
+			copy = split_and_delete();
+			i = 0;
+			while(copy[i])
+			{
+				if (ft_strequ(copy[i], tab[j]))
+					delete_env(i);
+				i++;
+			}
+			j++;
 		}
-		j++;
 	}
 	return ;
 }
@@ -108,14 +113,12 @@ void env_bultin(char *env)
 
 	tab = ft_strsplit_space(env);
 	if (tab[1] == NULL)
-	{
 		print_env();
-		return ;
-	}
 	else
 	{
 		ft_putstr("env: ");
 		ft_putstr(env);
 		ft_putendl(": No such file or directory");
 	}
+	ft_2dtabdel((void **)tab);
 }
