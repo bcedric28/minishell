@@ -85,6 +85,17 @@ void	main_commands(char *excve)
 		ft_error(excve, 0);
 }
 
+void	ft_access(char *path)
+{
+	if (access(path, F_OK) == -1)
+		ft_putstr("minishell: no such file or directory: ");
+	else if (access(path, X_OK) == -1)
+		ft_putstr("permission denied: ");
+	else
+		ft_putstr("not a directory: ");
+	ft_putendl(path);
+}
+
 void 	parse_commands_built(char *excve)
 {
 	char **tab;

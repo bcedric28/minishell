@@ -108,6 +108,28 @@ void	many_arguments(char **tab)
 	
 }
 
+void		ft_dollar(char *dollar)
+{
+	char **tab_dollar;
+	char *path;
+	char *home;
+
+	path = NULL;
+	tab_dollar = ft_strsplit(dollar, '$');
+	if (ft_strcmp(tab_dollar[0], "~") == 0)
+	{
+		home = ft_search_env("HOME");
+		change_dir(home, 0);
+		return ;
+	}
+	path = ft_search_env(tab_dollar[0]);
+	if (path == NULL)
+		return ;
+	else
+		change_dir(path, 0);
+	return ;
+}
+
 void	cd_builtin(char *cd)
 {
 	char **tab;
@@ -131,6 +153,10 @@ void	cd_builtin(char *cd)
 		{
 			change_dir(ft_search_env("OLDPWD"), 1);
 			return ;
+		}
+		else if (tab[1][0] == '$' && tab[1][1])
+		{
+			ft_dollar(tab[1]);
 		}
 		else if (tab[2] == NULL)
 		{
