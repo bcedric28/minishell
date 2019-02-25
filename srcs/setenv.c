@@ -12,6 +12,10 @@
 
 #include "minishell.h"
 
+/*
+**LEAK OK
+*/
+
 void	delete_and_replace(int pos, char **tab)
 {
 	int i;

@@ -12,6 +12,10 @@
 
 #include	"minishell.h"
 
+/*
+**LEAK OK
+*/
+
 char		**g_env = 0;
 
 void		exit_shell(void)
@@ -26,6 +30,7 @@ void		display_name(void)
 	char	*cwd;
 	char	buff[PATH_MAX + 1];
 
+	cwd = NULL;
 	cwd = getcwd(buff, PATH_MAX + 1);
 	len = ft_strlen(cwd);
 	while (len > 0 && cwd[len - 1] != '/')

@@ -12,6 +12,10 @@
 
 #include	"minishell.h"
 
+/*
+**LEAK OK
+*/
+
 int			len_env(char **env)
 {
 	int		i;
