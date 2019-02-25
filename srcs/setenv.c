@@ -45,7 +45,7 @@ void	add_env(char **tab)
 	while(g_env[i])
 	{
 			copy[i] = ft_strdup(g_env[i]);
-			i++;
+			free(g_env[i++]);
 	}
 	copy[i] = ft_strdup(tab[1]);
 	copy[i] = ft_strjoin(copy[i], "=");
@@ -60,17 +60,12 @@ void 	setenv_builtin(char *setenv)
 	char **copy;
 	int i;
 
+	copy = NULL;
 	tab = ft_strsplit_space(setenv);
 	if (tab[3] != NULL)
-	{
 		ft_putendl("setenv: Too many arguments");
-		return ;
-	}
-	if (tab[1] == NULL)
-	{
+	else if (tab[1] == NULL)
 		print_env();
-		return ;
-	}
 	else
 	{
 		i = 0;
@@ -86,4 +81,7 @@ void 	setenv_builtin(char *setenv)
 		}
 		add_env(tab);
 	}
+	ft_2dtabdel((void**)tab);
+	if (copy)
+		ft_2dtabdel((void**)copy);
 }
