@@ -16,7 +16,6 @@ char		**g_env = 0;
 
 void		exit_shell(void)
 {
-	write(1, "\n", 1);
 	exit(0);
 }
 
@@ -56,10 +55,6 @@ int	excute_built_setenv(char *echo)
 	return(0);
 }
 
-int	excute_built_exit(char *echo)
-{
-	return(0);
-}
 
 /*int	excute_built_cd(char *cd)
 {

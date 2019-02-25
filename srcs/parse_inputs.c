@@ -94,14 +94,14 @@ void 	parse_commands_built(char *excve)
 		echo_builtin(excve);
 	/*else if (ft_strequ(tab[0], "cd"))
 		excute_built_cd(excve);*/
-	else if (ft_strncmp(excve, "exit", 4) == 0)
-		excute_built_exit(excve);
+	else if (ft_strequ(tab[0], "exit"))
+		exit_shell();
 	else if (ft_strncmp(excve, "env", 3) == 0)
-		print_env(excve);
-	else if (ft_strncmp(excve, "unsetenv", 3) == 0)
+		print_env();
+	else if (ft_strequ(tab[0], "unsetenv"))
 		unsetenv_builtin(excve);
-	else if (ft_strncmp(excve, "setenv", 6) == 0)
-		excute_built_setenv(excve);
+	else if (ft_strequ(tab[0], "setenv"))
+		setenv_builtin(excve);
 	else
 		main_commands(excve);
 }

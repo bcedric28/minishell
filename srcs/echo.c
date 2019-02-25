@@ -73,7 +73,7 @@ void	display_echo(char **tab_echo, int n)
 		{
 			if (tab_echo[i][pos] == '"')
 				pos++;
-			if (tab_echo[i][pos] == '$')
+			if (tab_echo[i][pos] == '$' && tab_echo[i][pos - 1] != '\'')
 			{
 				find_env_echo(tab_echo[i]);
 				break ;

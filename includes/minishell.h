@@ -51,7 +51,7 @@ void		create_g_env(char **env);
 /*
 **Fichier env.c
 */
-void	print_env(char *env);
+void	print_env();
 void	unsetenv_builtin(char *unsetenv);
 char	**split_and_delete();
 void	delete_env(int pos);
@@ -59,5 +59,6 @@ void	delete_env(int pos);
 
 void	echo_builtin(char *echo);
 void	ft_error(char *excve, int i);
+void 	setenv_builtin(char *setenv);
 
 #endif
