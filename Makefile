@@ -15,7 +15,7 @@ NAME = minishell
 
 FLAG = -Wall -Wextra
 
-SOURCE = minishell.c
+SOURCE = minishell.c echo.c env.c parse_inputs.c create_g_env.c erroc.c
 
 LIBFT_DIR = Libft/
 
