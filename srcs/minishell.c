@@ -57,13 +57,6 @@ int	execute_commands(char *execute, char **execute_path)
 	return(1);
 }
 
-/*int	excute_built_cd(char *cd)
-{
-	cd_builtin(cd);
-	return(0);
-}
-*/
-
 int			main(int argc, char **argv, char **env)
 {
 	argc = 1;

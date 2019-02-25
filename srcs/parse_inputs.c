@@ -92,8 +92,8 @@ void 	parse_commands_built(char *excve)
 	tab = ft_strsplit_space(excve);
 	if (ft_strequ(tab[0], "echo"))
 		echo_builtin(excve);
-	/*else if (ft_strequ(tab[0], "cd"))
-		excute_built_cd(excve);*/
+	else if (ft_strequ(tab[0], "cd"))
+		cd_builtin(excve);
 	else if (ft_strequ(tab[0], "exit"))
 		exit_shell();
 	else if (ft_strequ(excve, "env"))

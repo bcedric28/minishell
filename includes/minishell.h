@@ -61,5 +61,7 @@ void	echo_builtin(char *echo);
 void	ft_error(char *excve, int i);
 void 	setenv_builtin(char *setenv);
 void env_bultin(char *env);
+void	cd_builtin(char *cd);
+char	*ft_search_env(char *path);
 
 #endif
