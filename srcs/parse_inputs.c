@@ -88,12 +88,44 @@ void	main_commands(char *excve)
 void	ft_access(char *path)
 {
 	if (access(path, F_OK) == -1)
+	{
 		ft_putstr("minishell: no such file or directory: ");
-	else if (access(path, X_OK) == -1)
-		ft_putstr("permission denied: ");
+		ft_putendl(path);
+	}
 	else
-		ft_putstr("not a directory: ");
-	ft_putendl(path);
+	{
+		ft_putstr(path);
+		ft_putendl(": Permission denied: ");
+	}
+}
+
+int		ft_dollar_first(char *dollar)
+{
+	char **tab_dollar;
+	char *path;
+
+	path = NULL;
+	if (ft_strncmp(dollar, "$", 1) != 0)
+		return (1);
+	tab_dollar = ft_strsplit(dollar, '$');
+	path = ft_search_env(tab_dollar[0]);
+	if (path == NULL)
+		return (0);
+	ft_access(path);
+	return (0);
+}
+
+int 	ft_vag_first(char *vag)
+{
+	char *path;
+
+	if (ft_strcmp(vag, "~") == 0)
+	{
+		path = ft_search_env("HOME");
+		ft_access(path);
+		return (0);
+	}
+	return(1);
 }
 
 void 	parse_commands_built(char *excve)
@@ -101,7 +133,11 @@ void 	parse_commands_built(char *excve)
 	char **tab;
 
 	tab = ft_strsplit_space(excve);
-	if (ft_strequ(tab[0], "echo"))
+	if (ft_dollar_first(excve) == 0)
+		return ;
+	if (ft_vag_first(excve) == 0)
+		return ;
+	else if (ft_strequ(tab[0], "echo"))
 		echo_builtin(excve);
 	else if (ft_strequ(tab[0], "cd"))
 		cd_builtin(excve);
