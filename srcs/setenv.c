@@ -23,18 +23,14 @@ void	delete_and_replace(int pos, char **tab)
 	{
 		if (i == pos)
 		{
-			free(copy[i]);
 			copy[i] = ft_strdup(tab[1]);
 			copy[i] = ft_strjoin(copy[i], "=");
 			if (tab[2] != NULL)
 				copy[i] = ft_strjoin(copy[i], tab[2]);
-			i++;
 		}
 		else
-		{
 			copy[i] = ft_strdup(g_env[i]);
-			i++;
-		}
+		free(g_env[i++]);
 	}
 	g_env = copy;
 }
