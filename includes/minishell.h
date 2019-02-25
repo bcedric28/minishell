@@ -60,5 +60,6 @@ void	delete_env(int pos);
 void	echo_builtin(char *echo);
 void	ft_error(char *excve, int i);
 void 	setenv_builtin(char *setenv);
+void env_bultin(char *env);
 
 #endif

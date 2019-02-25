@@ -101,3 +101,21 @@ void	print_env()
 		i++;
 	}
 }
+
+void env_bultin(char *env)
+{
+	char **tab;
+
+	tab = ft_strsplit_space(env);
+	if (tab[1] == NULL)
+	{
+		print_env();
+		return ;
+	}
+	else
+	{
+		ft_putstr("env: ");
+		ft_putstr(env);
+		ft_putendl(": No such file or directory");
+	}
+}

@@ -96,8 +96,8 @@ void 	parse_commands_built(char *excve)
 		excute_built_cd(excve);*/
 	else if (ft_strequ(tab[0], "exit"))
 		exit_shell();
-	else if (ft_strncmp(excve, "env", 3) == 0)
-		print_env();
+	else if (ft_strequ(excve, "env"))
+		env_bultin(excve);
 	else if (ft_strequ(tab[0], "unsetenv"))
 		unsetenv_builtin(excve);
 	else if (ft_strequ(tab[0], "setenv"))

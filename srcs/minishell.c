@@ -38,8 +38,17 @@ void		display_name(void)
 int	execute_commands(char *execute, char **execute_path)
 {
 	pid_t	pid;
+	struct stat file;
 
 	pid = fork();
+	lstat(execute, &file);
+	if ((S_ISREG(file.st_mode)) && !(file.st_mode & S_IXUSR))
+	{
+		ft_putstr("minishell: permission denied: ");
+		ft_putendl(execute);
+		kill(pid, SIGINT);
+		return (1);
+	}
 	if(pid == 0)
 		execve(execute, execute_path, g_env);
 	else if (pid < 0)
@@ -47,14 +56,6 @@ int	execute_commands(char *execute, char **execute_path)
 	wait(&pid);
 	return(1);
 }
-
-
-int	excute_built_setenv(char *echo)
-{
-
-	return(0);
-}
-
 
 /*int	excute_built_cd(char *cd)
 {
