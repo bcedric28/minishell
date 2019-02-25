@@ -26,12 +26,19 @@ void	display_echo_env(int i)
 	ft_putstr(&g_env[i][j]);
 }
 
-void 	display_echo_vag()
+void 	display_echo_vag(char *vag)
 {
 	char	*home;
 
 	home = ft_search_env("HOME");
-	ft_putendl(home);
+	if (!vag[1])
+		ft_putstr(home);
+	else if (vag[1] == '/')
+	{
+		vag = ft_strjoin(home, &vag[1]);
+		ft_putstr(vag);
+	}
+	return ;
 }
 
 void	find_env_echo(char *env)
@@ -81,8 +88,8 @@ void	display_echo(char **tab_echo, int n)
 		{
 			if (tab_echo[i][pos] == '~')
 			{
-				display_echo_vag();
-				return ;	
+				display_echo_vag(tab_echo[i]);
+				break ;
 			}
 			if (tab_echo[i][pos] == '"' || tab_echo[i][pos] == '\'')
 				pos++;

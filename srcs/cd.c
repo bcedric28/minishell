@@ -156,9 +156,13 @@ void	cd_builtin(char *cd)
 		}
 		else if (tab[1][0] == '$' && tab[1][1])
 			ft_dollar(tab[1]);
-		else if (tab[1][0] == '~' && !tab[1][1])
+		else if (tab[1][0] == '~')
 		{
-			change_dir(home, 0);
+			if (!tab[1][1])
+				change_dir(home, 0);
+			if (tab[1][1] == '/')
+				tab[1] = ft_strjoin(home, &tab[1][1]);
+			change_dir(tab[1], 0);
 			return ;
 		}
 		else if (tab[2] == NULL)
