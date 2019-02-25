@@ -67,5 +67,6 @@ int			main(int argc, char **argv, char **env)
 		display_name();
 		wait_input();
 	}
+	ft_2dtabdel((void**)g_env);
 	return (0);
 }

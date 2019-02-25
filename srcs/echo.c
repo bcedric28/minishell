@@ -71,7 +71,7 @@ void	display_echo(char **tab_echo, int n)
 		pos = 0;
 		while(tab_echo[i][pos])
 		{
-			if (tab_echo[i][pos] == '"')
+			if (tab_echo[i][pos] == '"' || tab_echo[i][pos] == '\'')
 				pos++;
 			if (tab_echo[i][pos] == '$' && tab_echo[i][pos - 1] != '\'')
 			{
