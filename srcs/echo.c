@@ -31,14 +31,38 @@ void 	display_echo_vag(char *vag)
 	char	*home;
 
 	home = ft_search_env("HOME");
+	if (home == NULL)
+	{
+		ft_putstr("HOME is not set");
+		return ;
+	}
 	if (!vag[1])
 		ft_putstr(home);
 	else if (vag[1] == '/')
 	{
 		vag = ft_strjoin(home, &vag[1]);
 		ft_putstr(vag);
+		free(vag);
 	}
+	else
+		ft_putstr("minishell: not enough directory stack entries");
+	free(home);
 	return ;
+}
+
+void	find_env_suit(char **copy, char *env)
+{
+	int i;
+
+	i = -1;
+	while(copy[++i])
+	{
+		if (ft_strequ(copy[i], env))
+		{
+			display_echo_env(i);
+			break ;
+		}
+	}
 }
 
 void	find_env_echo(char *env)
@@ -63,73 +87,83 @@ void	find_env_echo(char *env)
 		}
 	}
 	copy = split_and_delete();
-	i = 0;
-	while(copy[i])
-	{
-		if (ft_strequ(copy[i], new_env))
-		{
-			display_echo_env(i);
-			return ;
-		}
-		i++;
-	}
+	find_env_suit(copy, new_env);
+	free(new_env);
+	ft_2dtabdel((void **)copy);
 }
 
-void	display_echo(char **tab_echo, int n)
+int		condition_loop(int pos, int i, char **tab_echo)
 {
-	int i;
-	int pos;
+	if (tab_echo[i][pos] == '~'
+			&& ((ft_isspace(tab_echo[i][pos]) == 1) || pos == 0))
+	{
+		display_echo_vag(tab_echo[i]);
+		return (1);
+	}
+	if (tab_echo[i][pos] == '"' || tab_echo[i][pos] == '\'')
+		return (0);
+	if (tab_echo[i][pos] == '$' && tab_echo[i][pos - 1] != '\'')
+	{
+		find_env_echo(&tab_echo[i][pos]);
+		return (1);
+	}
+	else
+	{
+		ft_putchar(tab_echo[i][pos]);
+		return (0);
+	}
+	return (0);
+}
 
-	i = n;
-	while(tab_echo[i])
+void	display_echo(char **tab_echo, int i, int n)
+{
+	int pos;
+	int condition;
+
+	if (n == 1)
+		i++;
+	while(tab_echo[++i])
 	{
 		pos = 0;
 		while(tab_echo[i][pos])
 		{
-			if (tab_echo[i][pos] == '~')
-			{
-				display_echo_vag(tab_echo[i]);
+			condition = condition_loop(pos, i , tab_echo);
+			if (condition == 1)
 				break ;
-			}
-			if (tab_echo[i][pos] == '"' || tab_echo[i][pos] == '\'')
-				pos++;
-			if (tab_echo[i][pos] == '$' && tab_echo[i][pos - 1] != '\'')
-			{
-				find_env_echo(tab_echo[i]);
-				break ;
-			}
 			else
-			{
-				ft_putchar(tab_echo[i][pos]);
 				pos++;
-			}
 		}
 		ft_putchar(' ');
-		i++;
 	}
-	ft_putchar('\n');
+	if (n == 0)
+		ft_putchar('\n');
 }
 
 void	echo_builtin(char *echo)
 {
 	int i;
+	int n;
 	char *new_echo;
 	char **tab_echo;
 
 	i = -1;
+	n = 0;
 	while(echo[++i])
 		if (ft_isspace(echo[i]) == 1)
 			break ;
 	new_echo = ft_strsub(echo, i, ft_strlen(echo));
 	tab_echo = ft_strsplit_space(new_echo);
 	i = 0;
-	if (!tab_echo[i])
+	if (!tab_echo[0])
 	{
 		ft_putendl("");
+		free(new_echo);
+		ft_2dtabdel((void **)tab_echo);
 		return ;
 	}
 	if (ft_strcmp(tab_echo[i], "-n") == 0)
-		i++;
-	display_echo(tab_echo, i);
+		n = 1;
+	display_echo(tab_echo, (i - 1), n);
+	free(new_echo);
+	ft_2dtabdel((void **)tab_echo);
 }
-

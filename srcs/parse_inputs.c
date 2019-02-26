@@ -29,6 +29,10 @@
 **j'execute la commande ou sinon je renvoie une erreur
 */
 
+/*
+**leak is ok
+*/
+
 int track_without_path(char **excve)
 {
 	struct stat file;
@@ -64,11 +68,9 @@ void	main_commands(char *excve)
 	char **path;
 	char **execute_path;
 
-	i = 0;
-	j = 0;
-
+	i = -1;
 	execute_path = ft_strsplit_space(excve);
-	while(g_env[i])
+	while(g_env[++i])
 	{
 		j = 0;
 		if (ft_strstr(g_env[i], "PATH") != NULL)
@@ -77,12 +79,14 @@ void	main_commands(char *excve)
 			path[0] = ft_strsub(path[0], 5, ft_strlen(path[0]));
 			if (track_path(path, execute_path) == 0)
 				ft_error(excve, 0);
+			ft_2dtabdel((void **)path);
+			ft_2dtabdel((void **)execute_path);
 			return ;
 		}
-		i++;
 	}
 	if (track_without_path(execute_path) == 0)
 		ft_error(excve, 0);
+	ft_2dtabdel((void **)execute_path);
 }
 
 void	ft_access(char *path)
@@ -94,8 +98,8 @@ void	ft_access(char *path)
 	}
 	else
 	{
-		ft_putstr(path);
-		ft_putendl(": Permission denied: ");
+		ft_putstr("Permission denied: ");
+		ft_putendl(path);
 	}
 }
 
@@ -110,8 +114,13 @@ int		ft_dollar_first(char *dollar)
 	tab_dollar = ft_strsplit(dollar, '$');
 	path = ft_search_env(tab_dollar[0]);
 	if (path == NULL)
+	{
+		ft_2dtabdel((void**)tab_dollar);
 		return (0);
+	}
 	ft_access(path);
+	free(path);
+	ft_2dtabdel((void**)tab_dollar);
 	return (0);
 }
 
@@ -122,10 +131,36 @@ int 	ft_vag_first(char *vag)
 	if (ft_strcmp(vag, "~") == 0)
 	{
 		path = ft_search_env("HOME");
+		if (path == 0)
+		{
+			ft_putendl("HOME is not set");
+			return (0);
+		}
 		ft_access(path);
 		return (0);
 	}
 	return(1);
+}
+
+int 	is_point(char *excve)
+{
+	char **tab;
+
+	tab = ft_strsplit_space(excve);
+	if (ft_strcmp(tab[0], ".") == 0 || ft_strcmp(tab[0], "..") == 0)
+	{
+		ft_2dtabdel((void **)tab);
+		return (0);
+	}
+	ft_2dtabdel((void **)tab);
+	return (1);
+}
+
+void	return_and_free(char ***tab)
+{
+	if (tab)
+		ft_2dtabdel((void**)*tab);
+	return ;
 }
 
 void 	parse_commands_built(char *excve)
@@ -133,10 +168,12 @@ void 	parse_commands_built(char *excve)
 	char **tab;
 
 	tab = ft_strsplit_space(excve);
+	if (is_point(excve) == 0)
+		return(return_and_free(&tab));
 	if (ft_dollar_first(excve) == 0)
-		return ;
+		return(return_and_free(&tab));
 	if (ft_vag_first(excve) == 0)
-		return ;
+		return(return_and_free(&tab));
 	else if (ft_strequ(tab[0], "echo"))
 		echo_builtin(excve);
 	else if (ft_strequ(tab[0], "cd"))
@@ -151,11 +188,12 @@ void 	parse_commands_built(char *excve)
 		setenv_builtin(excve);
 	else
 		main_commands(excve);
+	ft_2dtabdel((void**)tab);
 }
 
 void parse_commands(char *commands)
 {
-	int i;
+	int 	i;
 	char	*excve;
 
 	i = 0;
@@ -165,6 +203,11 @@ void parse_commands(char *commands)
 		return ;
 	excve = ft_strtrim(&commands[i]);
 	parse_commands_built(excve);
+	if (excve)
+	{
+		free(excve);
+		excve = NULL;
+	}
 }
 
 void	wait_input()
@@ -173,6 +216,7 @@ void	wait_input()
 	char **commands;
 	int 	i;
 
+	commands = NULL;
 	if (get_next_line(STDIN_FILENO, &line) <= 0)
 		return ;
 	i = 0;
@@ -183,4 +227,6 @@ void	wait_input()
 			parse_commands(commands[i++]);
 	}
 	free(line);
+	if (commands)
+		ft_2dtabdel((void **)commands);
 }

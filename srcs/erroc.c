@@ -26,7 +26,7 @@ void	ft_error(char *excve, int i)
 	}
 	else
 	{
-		ft_putstr("\033[92mminishell->\033[0m command not found: ");
+		ft_putstr("minishell: command not found: ");
 		ft_putendl(excve);
 	}
 }

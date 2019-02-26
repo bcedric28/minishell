@@ -20,6 +20,7 @@ char		**g_env = 0;
 
 void		exit_shell(void)
 {
+	ft_2dtabdel((void**)g_env);
 	exit(0);
 }
 
@@ -54,7 +55,7 @@ int	execute_commands(char *execute, char **execute_path)
 		kill(pid, SIGINT);
 		return (1);
 	}
-	if(pid == 0)
+	if (pid == 0)
 		execve(execute, execute_path, g_env);
 	else if (pid < 0)
 		return (-1);
@@ -64,14 +65,15 @@ int	execute_commands(char *execute, char **execute_path)
 
 int			main(int argc, char **argv, char **env)
 {
+	t_elem *envir;
+
 	argc = 1;
 	argv = NULL;
-	create_g_env(env);
+	create_g_env(env, envir);
 	while(1)
 	{
 		display_name();
 		wait_input();
 	}
-	ft_2dtabdel((void**)g_env);
 	return (0);
 }

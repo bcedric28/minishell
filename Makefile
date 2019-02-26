@@ -13,7 +13,7 @@
 
 NAME = minishell
 
-FLAG = -Wall -Wextra
+FLAG = -Wall -Wextra -Werror -g
 
 SOURCE = minishell.c echo.c env.c parse_inputs.c create_g_env.c erroc.c \
 		setenv.c cd.c

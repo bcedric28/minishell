@@ -19,23 +19,24 @@ void	print_path()
 	char *str;
 	int i;
 
-	i = 0;
+	i = -1;
 	home = ft_search_env("HOME");
 	oldpath = ft_search_env("OLDPWD");
 	if (ft_strcmp(home, oldpath) == 0)
 		str = ft_strdup("~");
 	else
 	{
-		while(home[i])
-		{
+		while(home[++i])
 			if (oldpath[i] != home[i])
 				break ;
-			i++;
-		}
 		str = ft_strjoin("~", &oldpath[i]);
 	}
 	ft_putendl(str);
 	free(str);
+	if (home)
+		free(home);
+	if (oldpath)
+		free(oldpath);
 }
 
 void	change_dir(char *path, int arguments)
@@ -72,7 +73,7 @@ char	*only_path(int pos)
 	j = 0;
 	while(g_env[pos][j])
 	{
-		if(g_env[pos][j - 1] == '=')
+		if(j != 0 && g_env[pos][j - 1] == '=')
 			break ;
 		j++;
 	}
@@ -98,35 +99,125 @@ char	*ft_search_env(char *path)
 	return(NULL);
 }
 
-void	many_arguments(char **tab)
+void	many_arguments(char **tab, char *home)
 {
-	if (tab[2])
+	ft_putendl("cd: too many arguments");
+	if (home)
+		free(home);
+	ft_2dtabdel((void **)tab);
+	return ;
+	
+}
+
+void		ft_dollar_complement(char **tab_dollar, char *dollar)
+{
+	char *home;
+
+	home = ft_search_env("HOME");
+	if (home == NULL)
 	{
-		ft_putendl("cd: too many arguments");
+		ft_putendl("HOME is not set");
+		ft_2dtabdel((void**)tab_dollar);
+		free(dollar);
 		return ;
 	}
-	
+	change_dir(home, 0);
+	ft_2dtabdel((void**)tab_dollar);
+	free(dollar);
+	free(home);
+	return ;
 }
 
 void		ft_dollar(char *dollar)
 {
 	char **tab_dollar;
 	char *path;
-	char *home;
 
 	path = NULL;
 	tab_dollar = ft_strsplit(dollar, '$');
 	if (ft_strcmp(tab_dollar[0], "~") == 0)
-	{
-		home = ft_search_env("HOME");
-		change_dir(home, 0);
-		return ;
-	}
+		return(ft_dollar_complement(tab_dollar, dollar));
 	path = ft_search_env(tab_dollar[0]);
 	if (path == NULL)
 		return ;
 	else
+	{
 		change_dir(path, 0);
+		ft_2dtabdel((void**)tab_dollar);
+		free(dollar);
+		free(path);
+	}
+	return ;
+}
+
+void	cd_vag(char **tab, char *home)
+{
+	if (!tab[1][1])
+	{
+		if (home == NULL)
+			ft_putendl("HOME is not set");
+		else
+			change_dir(home, 0);
+	}
+	if (tab[1][1] == '/')
+	{
+		if (home == NULL)
+		{
+			ft_putendl("HOME is not set");
+			free(home);
+			ft_2dtabdel((void**)tab);
+			return ;
+		}
+		else
+			tab[1] = ft_strjoin(home, &tab[1][1]);
+		change_dir(tab[1], 0);
+	}
+	free(home);
+	ft_2dtabdel((void**)tab);
+	return ;
+}
+
+void	cd_go_back(char **tab)
+{
+	char *old;
+
+	old = NULL;
+	if (ft_strcmp(tab[1], "-") == 0)
+	{
+		old = ft_search_env("OLDPWD");
+		if (old != NULL)
+		{
+			change_dir(old, 1);
+			free(old);
+		}
+		else
+			ft_putendl("OLDPWD is not set");
+	}
+	else
+	{
+		ft_putstr("cd : no such file or directory: ");
+		ft_putendl(tab[1]);
+	}
+	ft_2dtabdel((void **)tab);
+	return ;
+}
+
+void	only_cd(char *home)
+{
+	if (home == NULL)
+		ft_putendl("HOME is not set");
+	else
+		change_dir(home, 0);
+	free(home);
+	return ;
+}
+
+void	cd_towards(char *home, char **tab)
+{
+	change_dir(tab[1], 0);
+	if (home)
+		free(home);
+	ft_2dtabdel((void**)tab);
 	return ;
 }
 
@@ -138,38 +229,19 @@ void	cd_builtin(char *cd)
 	tab = ft_strsplit_space(cd);
 	home = ft_search_env("HOME");
 	if (tab[1] == NULL)
-	{
-		change_dir(home, 0);
-		return ;
-	}
+		return (only_cd(home));
 	else
 	{
 		if (ft_strequ(tab[1], "--"))
-		{
-				change_dir(home, 0);
-				return ;
-		}
-		else if (tab[1][0] == '-' && !tab[1][2])
-		{
-			change_dir(ft_search_env("OLDPWD"), 1);
-			return ;
-		}
+			return (only_cd(home));
+		else if (tab[1][0] == '-')
+			return(cd_go_back(tab));
 		else if (tab[1][0] == '$' && tab[1][1])
-			ft_dollar(tab[1]);
+			return(ft_dollar(tab[1]));
 		else if (tab[1][0] == '~')
-		{
-			if (!tab[1][1])
-				change_dir(home, 0);
-			if (tab[1][1] == '/')
-				tab[1] = ft_strjoin(home, &tab[1][1]);
-			change_dir(tab[1], 0);
-			return ;
-		}
+			return(cd_vag(tab, home));
 		else if (tab[2] == NULL)
-		{
-			change_dir(tab[1], 0);
-			return ;
-		}
+			return(cd_towards(home, tab));
 	}
-	many_arguments(tab);
+	return(many_arguments(tab, home));
 }

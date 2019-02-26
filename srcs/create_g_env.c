@@ -16,27 +16,29 @@
 **LEAK OK
 */
 
-int			len_env(char **env)
+int			len_env(char **envt)
 {
 	int		i;
 	int		len;
 
 	i = -1;
 	len = 0;
-	while (env[++i])
+	while (envt[++i])
 		len++;
 	return (len);
 }
 
-void		create_g_env(char **env)
+void		create_g_env(char **env, t_elem envir)
 {
 	int		i;
 
-	g_env = (char **)malloc(sizeof(char *) * (len_env(env) + 1));
+	if (!(envir.envi = (char **)malloc(sizeof(char *) * (len_env(env) + 1))))
+		return ;
 	i = -1;
 	while (env[++i])
 	{
-		if (!(g_env[i] = ft_strdup(env[i])))
+		if (!(envir.envi[i] = ft_strdup(env[i])))
 			exit_shell();
 	}
+	envir.envi[i] = 0;
 }

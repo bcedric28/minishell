@@ -23,8 +23,10 @@
 # include <signal.h>
 # include <dirent.h>
 
-
-extern	char **g_env;
+typedef struct	s_el
+{
+	char	**envi;
+}				t_elem;
 
 /*
 **Fichier minishell.h

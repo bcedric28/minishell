@@ -22,7 +22,8 @@ void	delete_env(int pos)
 	int k;
 	char **copy;
 
-	copy = (char**)malloc(sizeof(char*) * (len_env(g_env)) + 1);
+	if (!(copy = (char**)ft_memalloc(sizeof(char*) * (len_env(g_env)))))
+		return ;
 	i = 0;
 	k = 0;
 	while(g_env[i])
@@ -36,6 +37,7 @@ void	delete_env(int pos)
 			i++;
 		}
 	}
+	copy[k] = 0;
 	g_env = copy;
 }
 
@@ -44,25 +46,27 @@ char	**split_and_delete()
 	char **copy;
 	int i;
 	int j;
+	int k;
 
-	i = 0;
-	copy = (char**)malloc(sizeof(char*) * (len_env(g_env)) + 1);
-	while(g_env[i])
+	i = -1;
+	k = 0;
+	if (!(copy = (char**)malloc(sizeof(char*) * (len_env(g_env)) + 1)))
+		return (NULL);
+	while(g_env[++i])
 	{
-		j = 0;
-		while(g_env[i][j])
+		j = -1;
+		while(g_env[i][++j])
 		{
-			if (g_env[i][j + 1] == '=')
+			if (g_env[i][j + 1] != '\0' && g_env[i][j + 1] == '=')
 			{
-				copy[i] = ft_strsub(g_env[i], 0, j + 1);
+				copy[k] = ft_strsub(g_env[i], 0, j + 1);
+				k++;
 				break ;
 			}
-			j++;
 		}
-		i++;
 	}
+	copy[k] = 0;
 	return(copy);
-
 }
 
 void		unsetenv_builtin(char *unsetenv)
@@ -78,20 +82,19 @@ void		unsetenv_builtin(char *unsetenv)
 		ft_putendl("unsetenv: Too few arguments.");
 	else
 	{
-		j = 1;
-		while(tab[j])
+		j = 0;
+		while(tab[++j])
 		{
 			copy = split_and_delete();
-			i = 0;
-			while(copy[i])
-			{
+			i = -1;
+			while(copy[++i])
 				if (ft_strequ(copy[i], tab[j]))
 					delete_env(i);
-				i++;
-			}
-			j++;
 		}
 	}
+	ft_2dtabdel((void **)tab);
+	if (copy)
+		ft_2dtabdel((void **)copy);
 	return ;
 }
 

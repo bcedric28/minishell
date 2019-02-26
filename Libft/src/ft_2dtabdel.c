@@ -19,7 +19,7 @@ void	ft_2dtabdel(void **tab)
 	i = 0;
 	while (tab[i])
 	{
-		free(tab[i]);
+		ft_memdel(&tab[i]);
 		i++;
 	}
 	free(tab);
