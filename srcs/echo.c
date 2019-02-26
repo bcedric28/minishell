@@ -12,25 +12,25 @@
 
 #include	"minishell.h"
 
-void	display_echo_env(int i)
+void	display_echo_env(int i, t_elem *envir)
 {
 	int j;
 
 	j = 0;
-	while(g_env[i][j])
+	while(envir->envi[i][j])
 	{
-		if (g_env[i][j - 1] == '=')
+		if (envir->envi[i][j - 1] == '=')
 			break ;
 		j++;
 	}
-	ft_putstr(&g_env[i][j]);
+	ft_putstr(&envir->envi[i][j]);
 }
 
-void 	display_echo_vag(char *vag)
+void 	display_echo_vag(char *vag, t_elem *envir)
 {
 	char	*home;
 
-	home = ft_search_env("HOME");
+	home = ft_search_env("HOME", envir);
 	if (home == NULL)
 	{
 		ft_putstr("HOME is not set");
@@ -50,7 +50,7 @@ void 	display_echo_vag(char *vag)
 	return ;
 }
 
-void	find_env_suit(char **copy, char *env)
+void	find_env_suit(char **copy, char *env, t_elem *envir)
 {
 	int i;
 
@@ -59,13 +59,13 @@ void	find_env_suit(char **copy, char *env)
 	{
 		if (ft_strequ(copy[i], env))
 		{
-			display_echo_env(i);
+			display_echo_env(i, envir);
 			break ;
 		}
 	}
 }
 
-void	find_env_echo(char *env)
+void	find_env_echo(char *env, t_elem *envir)
 {
 	char **copy;
 	int i;
@@ -86,25 +86,25 @@ void	find_env_echo(char *env)
 			j++;
 		}
 	}
-	copy = split_and_delete();
-	find_env_suit(copy, new_env);
+	copy = split_and_delete(envir);
+	find_env_suit(copy, new_env, envir);
 	free(new_env);
 	ft_2dtabdel((void **)copy);
 }
 
-int		condition_loop(int pos, int i, char **tab_echo)
+int		condition_loop(int pos, int i, char **tab_echo, t_elem *envir)
 {
 	if (tab_echo[i][pos] == '~'
 			&& ((ft_isspace(tab_echo[i][pos]) == 1) || pos == 0))
 	{
-		display_echo_vag(tab_echo[i]);
+		display_echo_vag(tab_echo[i], envir);
 		return (1);
 	}
 	if (tab_echo[i][pos] == '"' || tab_echo[i][pos] == '\'')
 		return (0);
 	if (tab_echo[i][pos] == '$' && tab_echo[i][pos - 1] != '\'')
 	{
-		find_env_echo(&tab_echo[i][pos]);
+		find_env_echo(&tab_echo[i][pos], envir);
 		return (1);
 	}
 	else
@@ -115,7 +115,7 @@ int		condition_loop(int pos, int i, char **tab_echo)
 	return (0);
 }
 
-void	display_echo(char **tab_echo, int i, int n)
+void	display_echo(char **tab_echo, int i, int n, t_elem *envir)
 {
 	int pos;
 	int condition;
@@ -127,7 +127,7 @@ void	display_echo(char **tab_echo, int i, int n)
 		pos = 0;
 		while(tab_echo[i][pos])
 		{
-			condition = condition_loop(pos, i , tab_echo);
+			condition = condition_loop(pos, i , tab_echo, envir);
 			if (condition == 1)
 				break ;
 			else
@@ -139,7 +139,7 @@ void	display_echo(char **tab_echo, int i, int n)
 		ft_putchar('\n');
 }
 
-void	echo_builtin(char *echo)
+void	echo_builtin(char *echo, t_elem *envir)
 {
 	int i;
 	int n;
@@ -163,7 +163,7 @@ void	echo_builtin(char *echo)
 	}
 	if (ft_strcmp(tab_echo[i], "-n") == 0)
 		n = 1;
-	display_echo(tab_echo, (i - 1), n);
+	display_echo(tab_echo, (i - 1), n, envir);
 	free(new_echo);
 	ft_2dtabdel((void **)tab_echo);
 }

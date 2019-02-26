@@ -16,11 +16,9 @@
 **LEAK OK
 */
 
-char		**g_env = 0;
-
-void		exit_shell(void)
+void		exit_shell(t_elem *envir)
 {
-	ft_2dtabdel((void**)g_env);
+	ft_2dtabdel((void**)envir->envi);
 	exit(0);
 }
 
@@ -41,7 +39,7 @@ void		display_name(void)
 	ft_putstr("-> \033[0m");
 }
 
-int	execute_commands(char *execute, char **execute_path)
+int	execute_commands(char *execute, char **execute_path, t_elem *envir)
 {
 	pid_t	pid;
 	struct stat file;
@@ -56,7 +54,7 @@ int	execute_commands(char *execute, char **execute_path)
 		return (1);
 	}
 	if (pid == 0)
-		execve(execute, execute_path, g_env);
+		execve(execute, execute_path, envir->envi);
 	else if (pid < 0)
 		return (-1);
 	wait(&pid);
@@ -65,15 +63,16 @@ int	execute_commands(char *execute, char **execute_path)
 
 int			main(int argc, char **argv, char **env)
 {
-	t_elem *envir;
+	t_elem envir;
 
+	envir.envi = NULL;
 	argc = 1;
 	argv = NULL;
-	create_g_env(env, envir);
+	create_genv(env, &envir);
 	while(1)
 	{
 		display_name();
-		wait_input();
+		wait_input(&envir);
 	}
 	return (0);
 }

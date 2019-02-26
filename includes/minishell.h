@@ -23,47 +23,48 @@
 # include <signal.h>
 # include <dirent.h>
 
-typedef struct	s_el
+typedef struct	s_elem
 {
-	char	**envi;
+	char		**envi;
 }				t_elem;
 
 /*
 **Fichier minishell.h
 */
-int	execute_commands(char *execute, char **execute_path);
+int	execute_commands(char *execute, char **execute_path, t_elem *envir);
 void		display_name(void);
-void		exit_shell(void);
+void		exit_shell(t_elem *envir);
+void	ft_tabdel(char ***tab);
 
 /*
 **Fichier parse_inputs.c
 */
-int	track_path(char **path, char **excve);
-void	main_commands(char *excve);
-void 	parse_commands_built(char *excve);
-void parse_commands(char *commands);
-void	wait_input();
+int	track_path(char **path, char **excve, t_elem *envir);
+void	main_commands(char *excve, t_elem *envir);
+void 	parse_commands_built(char *excve, t_elem *envir);
+void parse_commands(char *commands, t_elem *envir);
+void	wait_input(t_elem *envir);
 
 /*
 **Fichier create_g_env.c
 */
 int			len_env(char **env);
-void		create_g_env(char **env);
+void		create_genv(char **env, t_elem *envir);
 
 /*
 **Fichier env.c
 */
-void	print_env();
-void	unsetenv_builtin(char *unsetenv);
-char	**split_and_delete();
-void	delete_env(int pos);
+void	print_env(t_elem *envir);
+void	unsetenv_builtin(char *unsetenv, t_elem *envir);
+char	**split_and_delete(t_elem *envir);
+void	delete_env(int pos, t_elem *envir);
 
 
-void	echo_builtin(char *echo);
+void	echo_builtin(char *echo, t_elem *envir);
 void	ft_error(char *excve, int i);
-void 	setenv_builtin(char *setenv);
-void env_bultin(char *env);
-void	cd_builtin(char *cd);
-char	*ft_search_env(char *path);
+void 	setenv_builtin(char *setenv, t_elem *envir);
+void env_bultin(char *env, t_elem *envir);
+void	cd_builtin(char *cd, t_elem *envir);
+char	*ft_search_env(char *path, t_elem *envir);
 
 #endif

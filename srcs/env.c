@@ -16,32 +16,33 @@
 **PROBLEME DE LEAK
 */
 
-void	delete_env(int pos)
+void	delete_env(int pos, t_elem *envir)
 {
 	int i;
 	int k;
 	char **copy;
 
-	if (!(copy = (char**)ft_memalloc(sizeof(char*) * (len_env(g_env)))))
+	if (!(copy = (char**)ft_memalloc(sizeof(char*) * (len_env(envir->envi)))))
 		return ;
 	i = 0;
 	k = 0;
-	while(g_env[i])
+	while(envir->envi[i])
 	{
 		if (i == pos)
 			i++;
 		else
 		{
-			copy[k] = ft_strdup(g_env[i]);
+			copy[k] = ft_strdup(envir->envi[i]);
 			k++;
 			i++;
 		}
 	}
 	copy[k] = 0;
-	g_env = copy;
+	ft_tabdel(&(envir->envi));
+	envir->envi = copy;
 }
 
-char	**split_and_delete()
+char	**split_and_delete(t_elem *envir)
 {
 	char **copy;
 	int i;
@@ -50,16 +51,16 @@ char	**split_and_delete()
 
 	i = -1;
 	k = 0;
-	if (!(copy = (char**)malloc(sizeof(char*) * (len_env(g_env)) + 1)))
+	if (!(copy = (char**)malloc(sizeof(char*) * (len_env(envir->envi)) + 1)))
 		return (NULL);
-	while(g_env[++i])
+	while(envir->envi[++i])
 	{
 		j = -1;
-		while(g_env[i][++j])
+		while(envir->envi[i][++j])
 		{
-			if (g_env[i][j + 1] != '\0' && g_env[i][j + 1] == '=')
+			if (envir->envi[i][j + 1] != '\0' && envir->envi[i][j + 1] == '=')
 			{
-				copy[k] = ft_strsub(g_env[i], 0, j + 1);
+				copy[k] = ft_strsub(envir->envi[i], 0, j + 1);
 				k++;
 				break ;
 			}
@@ -69,7 +70,7 @@ char	**split_and_delete()
 	return(copy);
 }
 
-void		unsetenv_builtin(char *unsetenv)
+void		unsetenv_builtin(char *unsetenv, t_elem *envir)
 {
 	char **tab;
 	int i;
@@ -85,11 +86,11 @@ void		unsetenv_builtin(char *unsetenv)
 		j = 0;
 		while(tab[++j])
 		{
-			copy = split_and_delete();
+			copy = split_and_delete(envir);
 			i = -1;
 			while(copy[++i])
 				if (ft_strequ(copy[i], tab[j]))
-					delete_env(i);
+					delete_env(i, envir);
 		}
 	}
 	ft_2dtabdel((void **)tab);
@@ -98,25 +99,25 @@ void		unsetenv_builtin(char *unsetenv)
 	return ;
 }
 
-void	print_env()
+void	print_env(t_elem *envir)
 {
 	int i;
 
 	i = 0;
-	while(g_env[i])
+	while(envir->envi[i])
 	{
-		ft_putendl(g_env[i]);
+		ft_putendl(envir->envi[i]);
 		i++;
 	}
 }
 
-void env_bultin(char *env)
+void env_bultin(char *env, t_elem *envir)
 {
 	char **tab;
 
 	tab = ft_strsplit_space(env);
 	if (tab[1] == NULL)
-		print_env();
+		print_env(envir);
 	else
 	{
 		ft_putstr("env: ");

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   create_g_env.c                                     :+:      :+:    :+:   */
+/*   create_envir->envi.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bcedric <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -28,17 +28,17 @@ int			len_env(char **envt)
 	return (len);
 }
 
-void		create_g_env(char **env, t_elem envir)
+void		create_genv(char **env, t_elem *envir)
 {
 	int		i;
 
-	if (!(envir.envi = (char **)malloc(sizeof(char *) * (len_env(env) + 1))))
+	if (!(envir->envi = (char **)malloc(sizeof(char *) * (len_env(env) + 1))))
 		return ;
 	i = -1;
 	while (env[++i])
 	{
-		if (!(envir.envi[i] = ft_strdup(env[i])))
-			exit_shell();
+		if (!(envir->envi[i] = ft_strdup(env[i])))
+			exit_shell(envir);
 	}
-	envir.envi[i] = 0;
+	envir->envi[i] = 0;
 }

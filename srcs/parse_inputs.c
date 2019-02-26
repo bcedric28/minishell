@@ -33,58 +33,63 @@
 **leak is ok
 */
 
-int track_without_path(char **excve)
+int track_without_path(char **excve, t_elem *envir)
 {
 	struct stat file;
 
 	if (lstat(excve[0], &file) == 0)
-		return(execute_commands(excve[0], excve));
+		return(execute_commands(excve[0], excve, envir));
 	return(0);
 }
 
-int	track_path(char **path, char **excve)
+int	track_path(char **path, char **excve, t_elem *envir)
 {
 	int i;
 	struct stat file;
+	char *tmp;
 
 	i = 0;
 	if (lstat(excve[0], &file) == 0)
-		return(execute_commands(excve[0], excve));
+		return(execute_commands(excve[0], excve, envir));
 	while(path[i])
 	{
-		path[i] = ft_strjoin(path[i], "/");
-		path[i] = ft_strjoin(path[i], excve[0]);
+		tmp = ft_strjoin(path[i], "/");
+		path[i] = ft_strjoin(tmp, excve[0]);
+		free(tmp);
 		if (lstat(path[i], &file) == 0)
-			return(execute_commands(path[i], excve));
+			return(execute_commands(path[i], excve, envir));
 		i++;
 	}
 	return (0);
 }
 
-void	main_commands(char *excve)
+void	main_commands(char *excve, t_elem *envir)
 {
 	int i;
 	int j;
 	char **path;
 	char **execute_path;
+	char *tmp;
 
 	i = -1;
 	execute_path = ft_strsplit_space(excve);
-	while(g_env[++i])
+	while(envir->envi[++i])
 	{
 		j = 0;
-		if (ft_strstr(g_env[i], "PATH") != NULL)
+		if (ft_strstr(envir->envi[i], "PATH") != NULL)
 		{
-			path = ft_strsplit(g_env[i], ':');
-			path[0] = ft_strsub(path[0], 5, ft_strlen(path[0]));
-			if (track_path(path, execute_path) == 0)
+			path = ft_strsplit(envir->envi[i], ':');
+			tmp = path[0];
+			free(path[0]);
+			path[0] = ft_strsub(tmp, 5, ft_strlen(tmp));
+			if (track_path(path, execute_path, envir) == 0)
 				ft_error(excve, 0);
 			ft_2dtabdel((void **)path);
 			ft_2dtabdel((void **)execute_path);
 			return ;
 		}
 	}
-	if (track_without_path(execute_path) == 0)
+	if (track_without_path(execute_path, envir) == 0)
 		ft_error(excve, 0);
 	ft_2dtabdel((void **)execute_path);
 }
@@ -103,7 +108,7 @@ void	ft_access(char *path)
 	}
 }
 
-int		ft_dollar_first(char *dollar)
+int		ft_dollar_first(char *dollar, t_elem *envir)
 {
 	char **tab_dollar;
 	char *path;
@@ -112,7 +117,7 @@ int		ft_dollar_first(char *dollar)
 	if (ft_strncmp(dollar, "$", 1) != 0)
 		return (1);
 	tab_dollar = ft_strsplit(dollar, '$');
-	path = ft_search_env(tab_dollar[0]);
+	path = ft_search_env(tab_dollar[0], envir);
 	if (path == NULL)
 	{
 		ft_2dtabdel((void**)tab_dollar);
@@ -124,13 +129,13 @@ int		ft_dollar_first(char *dollar)
 	return (0);
 }
 
-int 	ft_vag_first(char *vag)
+int 	ft_vag_first(char *vag, t_elem *envir)
 {
 	char *path;
 
 	if (ft_strcmp(vag, "~") == 0)
 	{
-		path = ft_search_env("HOME");
+		path = ft_search_env("HOME", envir);
 		if (path == 0)
 		{
 			ft_putendl("HOME is not set");
@@ -163,35 +168,35 @@ void	return_and_free(char ***tab)
 	return ;
 }
 
-void 	parse_commands_built(char *excve)
+void 	parse_commands_built(char *excve, t_elem *envir)
 {
 	char **tab;
 
 	tab = ft_strsplit_space(excve);
 	if (is_point(excve) == 0)
 		return(return_and_free(&tab));
-	if (ft_dollar_first(excve) == 0)
+	if (ft_dollar_first(excve, envir) == 0)
 		return(return_and_free(&tab));
-	if (ft_vag_first(excve) == 0)
+	if (ft_vag_first(excve, envir) == 0)
 		return(return_and_free(&tab));
 	else if (ft_strequ(tab[0], "echo"))
-		echo_builtin(excve);
+		echo_builtin(excve, envir);
 	else if (ft_strequ(tab[0], "cd"))
-		cd_builtin(excve);
+		cd_builtin(excve, envir);
 	else if (ft_strequ(tab[0], "exit"))
-		exit_shell();
+		exit_shell(envir);
 	else if (ft_strequ(excve, "env"))
-		env_bultin(excve);
+		env_bultin(excve, envir);
 	else if (ft_strequ(tab[0], "unsetenv"))
-		unsetenv_builtin(excve);
+		unsetenv_builtin(excve, envir);
 	else if (ft_strequ(tab[0], "setenv"))
-		setenv_builtin(excve);
+		setenv_builtin(excve, envir);
 	else
-		main_commands(excve);
+		main_commands(excve, envir);
 	ft_2dtabdel((void**)tab);
 }
 
-void parse_commands(char *commands)
+void parse_commands(char *commands, t_elem *envir)
 {
 	int 	i;
 	char	*excve;
@@ -202,7 +207,7 @@ void parse_commands(char *commands)
 	if (!commands[i])
 		return ;
 	excve = ft_strtrim(&commands[i]);
-	parse_commands_built(excve);
+	parse_commands_built(excve, envir);
 	if (excve)
 	{
 		free(excve);
@@ -210,7 +215,7 @@ void parse_commands(char *commands)
 	}
 }
 
-void	wait_input()
+void	wait_input(t_elem *envir)
 {
 	char *line;
 	char **commands;
@@ -224,7 +229,7 @@ void	wait_input()
 	{
 		commands = ft_strsplit(line, ';');
 		while(commands[i])
-			parse_commands(commands[i++]);
+			parse_commands(commands[i++], envir);
 	}
 	free(line);
 	if (commands)

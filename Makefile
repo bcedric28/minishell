@@ -43,7 +43,7 @@ comp:
 	@make -C $(LIBFT_DIR)
 
 $(NAME): $(OBJ)
-	@gcc $(FLAG) $(COMP_OBJ) -I $(INCLUDE) -L $(LIBFT_DIR) -lft  -o $(NAME)
+	@gcc $(FLAG) $(COMP_OBJ) -I $(INCLUDE) -L $(LIBFT_DIR) -lft  -o $(NAME) 
 	@echo "$(GGCOLORCYAN)Creation$(GGRESET) du binaire $(GGMAG)./minishell$(GGRESET)..."
 	@echo "$(GGCOLORGREEN)Success!$(GGRESET)"
 
