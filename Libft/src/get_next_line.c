@@ -53,10 +53,7 @@ int				ft_line(char **tab, char **line)
 			return (0);
 		free(tmp);
 		if (*tab && !(*tab[0]))
-		{
-			free(*tab);
-			*tab = NULL;
-		}
+			ft_strdel(tab);
 	}
 	else if (!(*line = ft_strdup(*tab)))
 		return (0);

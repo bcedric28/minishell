@@ -37,7 +37,6 @@ int		execute_commands(char *execute, char **execute_path, t_elem *envir)
 void	main_commands(char *excve, t_elem *envir)
 {
 	int		i;
-	int		j;
 	char	**path;
 	char	**execute_path;
 	char	*tmp;
@@ -46,7 +45,6 @@ void	main_commands(char *excve, t_elem *envir)
 	execute_path = ft_strsplit_space(excve);
 	while (envir->envi[++i])
 	{
-		j = 0;
 		if (ft_strstr(envir->envi[i], "PATH") != NULL)
 		{
 			path = ft_strsplit(envir->envi[i], ':');

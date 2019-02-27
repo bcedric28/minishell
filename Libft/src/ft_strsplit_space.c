@@ -21,7 +21,8 @@ static size_t	ft_countletter(char const *s)
 	countletter = 0;
 	while (s[i])
 	{
-		if (ft_isspace(s[i]) == 0 && ft_isspace(s[i + 1]) == 0 && s[i + 1] != '\0')
+		if (ft_isspace(s[i]) == 0 &&
+			ft_isspace(s[i + 1]) == 0 && s[i + 1] != '\0')
 			countletter++;
 		else if (ft_isspace(s[i]) == 1 && ft_isspace(s[i - 1]) == 0)
 			break ;
@@ -89,22 +90,21 @@ char			**ft_strsplit_space(char const *s)
 	if (s == NULL)
 		return (NULL);
 	i = 0;
-	k = 0;
+	k = -1;
 	str = (char**)malloc(sizeof(char*) * (ft_countwords(s)) + 1);
 	if (str == NULL)
 		return (NULL);
-	while (s[k])
-	{
-		if ((ft_isspace(s[k]) == 1 && ft_isspace(s[k + 1]) == 0 && s[k + 1] != '\0') ||
+	while (s[++k])
+		if ((ft_isspace(s[k]) == 1 &&
+			ft_isspace(s[k + 1]) == 0 && s[k + 1] != '\0') ||
 			(k == 0 && ft_isspace(s[k]) == 0))
 		{
-			str[i] = ft_word((k == 0 && ft_isspace(s[k]) == 0) ? &s[k] : &s[k + 1]);
+			str[i] = ft_word((k == 0 &&
+				ft_isspace(s[k]) == 0) ? &s[k] : &s[k + 1]);
 			if (str[i] == NULL)
 				return (ft_remove(str, i));
 			i++;
 		}
-		k++;
-	}
 	str[i] = 0;
 	return (str);
 }
