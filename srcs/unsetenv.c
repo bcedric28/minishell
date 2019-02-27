@@ -29,8 +29,8 @@ void	delete_env(int pos, t_elem *envir)
 		else
 		{
 			copy[k] = ft_strdup(envir->envi[i]);
-			k++;
 			i++;
+			k++;
 		}
 	}
 	copy[k] = 0;
@@ -38,11 +38,31 @@ void	delete_env(int pos, t_elem *envir)
 	envir->envi = copy;
 }
 
+void	befor_delete_env(t_elem *envir, char **tab, char **copy)
+{
+	int k;
+	int j;
+	int i;
+
+	j = 0;
+	k = 0;
+	while (tab[++j])
+	{
+		i = -1;
+		while (copy[++i])
+		{
+			if (ft_strequ(copy[i], tab[j]))
+			{
+				delete_env(i - k, envir);
+				k++;
+			}
+		}
+	}
+}
+
 void	unsetenv_builtin(char *unsetenv, t_elem *envir)
 {
 	char	**tab;
-	int		i;
-	int		j;
 	char	**copy;
 
 	copy = NULL;
@@ -51,15 +71,8 @@ void	unsetenv_builtin(char *unsetenv, t_elem *envir)
 		ft_putendl("unsetenv: Too few arguments.");
 	else
 	{
-		j = 0;
 		copy = split_and_delete(envir);
-		while (tab[++j])
-		{
-			i = -1;
-			while (copy[++i])
-				if (ft_strequ(copy[i], tab[j]))
-					delete_env(i, envir);
-		}
+		befor_delete_env(envir, tab, copy);
 		ft_2dtabdel((void **)copy);
 	}
 	ft_2dtabdel((void **)tab);

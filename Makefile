@@ -59,7 +59,7 @@ clean:
 fclean: clean
 	@make -C $(LIBFT_DIR) fclean
 	@rm -rf $(NAME)
-	@echo "$(GGCOLORRED)Suppresion$(GGRESET) de ft_ls..."
+	@echo "$(GGCOLORRED)Suppresion$(GGRESET) de minishell..."
 
 re: fclean all
 
