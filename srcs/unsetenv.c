@@ -5,37 +5,63 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: bcedric <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/02/27 13:00:37 by bcedric           #+#    #+#             */
-/*   Updated: 2019/02/27 13:00:39 by bcedric          ###   ########.fr       */
+/*   Created: 2019/02/25 08:47:42 by bcedric           #+#    #+#             */
+/*   Updated: 2019/02/27 12:48:56 by bcedric          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	print_env(t_elem *envir)
+void	delete_env(int pos, t_elem *envir)
 {
-	int	i;
+	int		i;
+	int		k;
+	char	**copy;
 
+	if (!(copy = (char**)ft_memalloc(sizeof(char*) * (len_env(envir->envi)))))
+		return ;
 	i = 0;
+	k = 0;
 	while (envir->envi[i])
 	{
-		ft_putendl(envir->envi[i]);
-		i++;
+		if (i == pos)
+			i++;
+		else
+		{
+			copy[k] = ft_strdup(envir->envi[i]);
+			k++;
+			i++;
+		}
 	}
+	copy[k] = 0;
+	ft_tabdel(&(envir->envi));
+	envir->envi = copy;
 }
 
-void	env_bultin(char *env, t_elem *envir)
+void	unsetenv_builtin(char *unsetenv, t_elem *envir)
 {
 	char	**tab;
+	int		i;
+	int		j;
+	char	**copy;
 
-	tab = ft_strsplit_space(env);
+	copy = NULL;
+	tab = ft_strsplit_space(unsetenv);
 	if (tab[1] == NULL)
-		print_env(envir);
+		ft_putendl("unsetenv: Too few arguments.");
 	else
 	{
-		ft_putstr("env: ");
-		ft_putstr(env);
-		ft_putendl(": No such file or directory");
+		j = 0;
+		copy = split_and_delete(envir);
+		while (tab[++j])
+		{
+			i = -1;
+			while (copy[++i])
+				if (ft_strequ(copy[i], tab[j]))
+					delete_env(i, envir);
+		}
 	}
+	ft_2dtabdel((void **)copy);
 	ft_2dtabdel((void **)tab);
+	return ;
 }

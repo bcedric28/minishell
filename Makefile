@@ -13,10 +13,11 @@
 
 NAME = minishell
 
-FLAG = -Wall -Wextra -Werror -g
+FLAG = -Wall -Wextra -Werror
 
-SOURCE = minishell.c echo.c env.c parse_inputs.c create_g_env.c erroc.c \
-		setenv.c cd.c
+SOURCE = cd.c change_dir.c create_g_env.c display_echo.c dollar.c echo.c \
+		env.c error.c execute.c minishell.c parse_inputs.c setenv.c track.c \
+		unsetenv.c utils.c vag.c
 
 LIBFT_DIR = Libft/
 

@@ -6,25 +6,20 @@
 /*   By: bcedric <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/20 21:51:10 by bcedric           #+#    #+#             */
-/*   Updated: 2019/02/20 21:51:14 by bcedric          ###   ########.fr       */
+/*   Updated: 2019/02/27 12:46:15 by bcedric          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include	"minishell.h"
+#include "minishell.h"
 
-/*
-**LEAK OK
-*/
-
-void		exit_shell(t_elem *envir, char **commands)
+void	exit_shell(t_elem *envir, char **commands)
 {
 	ft_2dtabdel((void **)commands);
 	ft_2dtabdel((void**)envir->envi);
 	exit(0);
 }
 
-
-void		display_name(void)
+void	display_name(void)
 {
 	int		len;
 	char	*cwd;
@@ -40,37 +35,15 @@ void		display_name(void)
 	ft_putstr("-> \033[0m");
 }
 
-int	execute_commands(char *execute, char **execute_path, t_elem *envir)
+int		main(int argc, char **argv, char **env)
 {
-	pid_t	pid;
-	struct stat file;
-
-	pid = fork();
-	lstat(execute, &file);
-	if ((S_ISREG(file.st_mode)) && !(file.st_mode & S_IXUSR))
-	{
-		ft_putstr(execute);
-		ft_putendl(": Permission denied.");
-		kill(pid, SIGINT);
-		return (1);
-	}
-	if (pid == 0)
-		execve(execute, execute_path, envir->envi);
-	else if (pid < 0)
-		return (-1);
-	wait(&pid);
-	return(1);
-}
-
-int			main(int argc, char **argv, char **env)
-{
-	t_elem envir;
+	t_elem	envir;
 
 	envir.envi = NULL;
 	argc = 1;
 	argv = NULL;
 	create_genv(env, &envir);
-	while(1)
+	while (1)
 	{
 		display_name();
 		wait_input(&envir);

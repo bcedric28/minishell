@@ -6,22 +6,18 @@
 /*   By: bcedric <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/02/25 11:17:20 by bcedric           #+#    #+#             */
-/*   Updated: 2019/02/25 11:17:22 by bcedric          ###   ########.fr       */
+/*   Updated: 2019/02/27 12:43:59 by bcedric          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-/*
-**LEAK OK AND NORME OK
-*/
 
 void	ft_tabdel(char ***tab)
 {
 	int i;
 
 	i = 0;
-	while((*tab)[i])
+	while ((*tab)[i])
 	{
 		free((*tab)[i]);
 		i++;
@@ -31,9 +27,9 @@ void	ft_tabdel(char ***tab)
 
 void	add_env(char **tab, t_elem *envir)
 {
-	char **copy;
-	char *tmp;
-	int i;
+	char	**copy;
+	char	*tmp;
+	int		i;
 
 	if (!(copy = (char**)malloc(sizeof(char*) *
 		((len_env(envir->envi) + 1) + 1))))
@@ -41,8 +37,8 @@ void	add_env(char **tab, t_elem *envir)
 	i = 0;
 	while (envir->envi[i])
 	{
-			copy[i] = ft_strdup(envir->envi[i]);
-			i++;
+		copy[i] = ft_strdup(envir->envi[i]);
+		i++;
 	}
 	tmp = ft_strjoin(tab[1], "=");
 	if (tab[2])
@@ -57,9 +53,9 @@ void	add_env(char **tab, t_elem *envir)
 
 void	on_setenv(char **tab, t_elem *envir)
 {
-	char **copy;
-	char *tmp;
-	int i;
+	char	**copy;
+	char	*tmp;
+	int		i;
 
 	i = 0;
 	copy = split_and_delete(envir);
@@ -83,10 +79,10 @@ void	on_setenv(char **tab, t_elem *envir)
 	ft_2dtabdel((void**)copy);
 }
 
-void 	setenv_builtin(char *setenv, t_elem *envir)
+void	setenv_builtin(char *setenv, t_elem *envir)
 {
-	char **tab;
-	int i;
+	char	**tab;
+	int		i;
 
 	tab = ft_strsplit_space(setenv);
 	i = len_env(tab);
