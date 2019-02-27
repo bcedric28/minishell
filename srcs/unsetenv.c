@@ -60,8 +60,8 @@ void	unsetenv_builtin(char *unsetenv, t_elem *envir)
 				if (ft_strequ(copy[i], tab[j]))
 					delete_env(i, envir);
 		}
+		ft_2dtabdel((void **)copy);
 	}
-	ft_2dtabdel((void **)copy);
 	ft_2dtabdel((void **)tab);
 	return ;
 }

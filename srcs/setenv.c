@@ -91,6 +91,17 @@ void	setenv_builtin(char *setenv, t_elem *envir)
 	else if (tab[1] == NULL)
 		print_env(envir);
 	else
+	{
+		i = -1;
+		while (tab[1][++i])
+			if (ft_isalnum(tab[1][i]) == 0)
+			{
+				ft_putstr("setenv: Variable ");
+				ft_putendl("name must contain alphanumeric characters.");
+				ft_2dtabdel((void**)tab);
+				return ;
+			}
 		on_setenv(tab, envir);
+	}
 	ft_2dtabdel((void**)tab);
 }
