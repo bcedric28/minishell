@@ -38,7 +38,7 @@ void		create_genv(char **env, t_elem *envir)
 	while (env[++i])
 	{
 		if (!(envir->envi[i] = ft_strdup(env[i])))
-			exit_shell(envir);
+			return ;
 	}
 	envir->envi[i] = 0;
 }

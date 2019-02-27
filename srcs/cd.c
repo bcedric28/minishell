@@ -113,7 +113,7 @@ void	many_arguments(char **tab, char *home)
 	
 }
 
-void		ft_dollar_complement(char **tab_dollar, char *dollar, t_elem *envir)
+void		ft_dollar_complement(char **tab_dollar, char **dollar, t_elem *envir)
 {
 	char *home;
 
@@ -121,34 +121,40 @@ void		ft_dollar_complement(char **tab_dollar, char *dollar, t_elem *envir)
 	if (home == NULL)
 	{
 		ft_putendl("HOME is not set");
-		ft_2dtabdel((void**)tab_dollar);
-		free(dollar);
+		ft_2dtabdel((void **)tab_dollar);
+		ft_2dtabdel((void **)dollar);
 		return ;
 	}
 	change_dir(home, 0, envir);
-	ft_2dtabdel((void**)tab_dollar);
-	free(dollar);
+	ft_2dtabdel((void **)tab_dollar);
+	ft_2dtabdel((void **)dollar);
 	free(home);
 	return ;
 }
 
-void		ft_dollar(char *dollar, t_elem *envir)
+void		ft_dollar(char **dollar, t_elem *envir, char *home)
 {
 	char **tab_dollar;
 	char *path;
 
 	path = NULL;
-	tab_dollar = ft_strsplit(dollar, '$');
+	if (home)
+		free(home);
+	tab_dollar = ft_strsplit(dollar[1], '$');
 	if (ft_strcmp(tab_dollar[0], "~") == 0)
 		return(ft_dollar_complement(tab_dollar, dollar, envir));
 	path = ft_search_env(tab_dollar[0], envir);
 	if (path == NULL)
+	{
+		ft_2dtabdel((void**)tab_dollar);
+		ft_2dtabdel((void **)dollar);
 		return ;
+	}
 	else
 	{
 		change_dir(path, 0, envir);
 		ft_2dtabdel((void**)tab_dollar);
-		free(dollar);
+		ft_2dtabdel((void **)dollar);
 		free(path);
 	}
 	return ;
@@ -156,6 +162,8 @@ void		ft_dollar(char *dollar, t_elem *envir)
 
 void	cd_vag(char **tab, char *home, t_elem *envir)
 {
+	char *tmp; 
+
 	if (!tab[1][1])
 	{
 		if (home == NULL)
@@ -173,7 +181,11 @@ void	cd_vag(char **tab, char *home, t_elem *envir)
 			return ;
 		}
 		else
-			tab[1] = ft_strjoin(home, &tab[1][1]);
+		{
+			tmp = tab[1];
+			tab[1] = ft_strjoin(home, &tmp[1]);
+			free(tmp);
+		}
 		change_dir(tab[1], 0, envir);
 	}
 	free(home);
@@ -181,11 +193,13 @@ void	cd_vag(char **tab, char *home, t_elem *envir)
 	return ;
 }
 
-void	cd_go_back(char **tab, t_elem *envir)
+void	cd_go_back(char **tab, t_elem *envir, char *home)
 {
 	char *old;
 
 	old = NULL;
+	if (home)
+		free(home);
 	if (ft_strcmp(tab[1], "-") == 0)
 	{
 		old = ft_search_env("OLDPWD", envir);
@@ -240,9 +254,9 @@ void	cd_builtin(char *cd, t_elem *envir)
 		if (ft_strequ(tab[1], "--"))
 			return (only_cd(home, envir, tab));
 		else if (tab[1][0] == '-')
-			return(cd_go_back(tab, envir));
+			return(cd_go_back(tab, envir, home));
 		else if (tab[1][0] == '$' && tab[1][1])
-			return(ft_dollar(tab[1], envir));
+			return(ft_dollar(tab, envir, home));
 		else if (tab[1][0] == '~')
 			return(cd_vag(tab, home, envir));
 		else if (tab[2] == NULL)

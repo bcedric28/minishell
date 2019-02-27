@@ -16,8 +16,9 @@
 **LEAK OK
 */
 
-void		exit_shell(t_elem *envir)
+void		exit_shell(t_elem *envir, char **commands)
 {
+	ft_2dtabdel((void **)commands);
 	ft_2dtabdel((void**)envir->envi);
 	exit(0);
 }
@@ -48,8 +49,8 @@ int	execute_commands(char *execute, char **execute_path, t_elem *envir)
 	lstat(execute, &file);
 	if ((S_ISREG(file.st_mode)) && !(file.st_mode & S_IXUSR))
 	{
-		ft_putstr("minishell: permission denied: ");
-		ft_putendl(execute);
+		ft_putstr(execute);
+		ft_putendl(": Permission denied.");
 		kill(pid, SIGINT);
 		return (1);
 	}

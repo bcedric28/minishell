@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include <stdio.h>
 
 char			*ft_read(char **tab, char *buf, int fd)
 {
@@ -51,6 +52,11 @@ int				ft_line(char **tab, char **line)
 		if (!(*tab = ft_strdup(buf + 1)))
 			return (0);
 		free(tmp);
+		if (*tab && !(*tab[0]))
+		{
+			free(*tab);
+			*tab = NULL;
+		}
 	}
 	else if (!(*line = ft_strdup(*tab)))
 		return (0);

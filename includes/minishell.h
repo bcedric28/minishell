@@ -33,7 +33,7 @@ typedef struct	s_elem
 */
 int	execute_commands(char *execute, char **execute_path, t_elem *envir);
 void		display_name(void);
-void		exit_shell(t_elem *envir);
+void		exit_shell(t_elem *envir, char **commands);
 void	ft_tabdel(char ***tab);
 
 /*
@@ -41,8 +41,8 @@ void	ft_tabdel(char ***tab);
 */
 int	track_path(char **path, char **excve, t_elem *envir);
 void	main_commands(char *excve, t_elem *envir);
-void 	parse_commands_built(char *excve, t_elem *envir);
-void parse_commands(char *commands, t_elem *envir);
+void 	parse_commands_built(char *excve, t_elem *envir, char **commands);
+void parse_commands(char *commands, t_elem *envir, char **command);
 void	wait_input(t_elem *envir);
 
 /*

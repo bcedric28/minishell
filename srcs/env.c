@@ -84,18 +84,17 @@ void		unsetenv_builtin(char *unsetenv, t_elem *envir)
 	else
 	{
 		j = 0;
+		copy = split_and_delete(envir);
 		while(tab[++j])
 		{
-			copy = split_and_delete(envir);
 			i = -1;
 			while(copy[++i])
 				if (ft_strequ(copy[i], tab[j]))
 					delete_env(i, envir);
 		}
 	}
+	ft_2dtabdel((void **)copy);
 	ft_2dtabdel((void **)tab);
-	if (copy)
-		ft_2dtabdel((void **)copy);
 	return ;
 }
 

@@ -54,6 +54,7 @@ int	track_path(char **path, char **excve, t_elem *envir)
 	while(path[i])
 	{
 		tmp = ft_strjoin(path[i], "/");
+		free(path[i]);
 		path[i] = ft_strjoin(tmp, excve[0]);
 		free(tmp);
 		if (lstat(path[i], &file) == 0)
@@ -80,8 +81,8 @@ void	main_commands(char *excve, t_elem *envir)
 		{
 			path = ft_strsplit(envir->envi[i], ':');
 			tmp = path[0];
-			free(path[0]);
 			path[0] = ft_strsub(tmp, 5, ft_strlen(tmp));
+			free(tmp);
 			if (track_path(path, execute_path, envir) == 0)
 				ft_error(excve, 0);
 			ft_2dtabdel((void **)path);
@@ -168,7 +169,7 @@ void	return_and_free(char ***tab)
 	return ;
 }
 
-void 	parse_commands_built(char *excve, t_elem *envir)
+void 	parse_commands_built(char *excve, t_elem *envir, char **commands)
 {
 	char **tab;
 
@@ -184,8 +185,8 @@ void 	parse_commands_built(char *excve, t_elem *envir)
 	else if (ft_strequ(tab[0], "cd"))
 		cd_builtin(excve, envir);
 	else if (ft_strequ(tab[0], "exit"))
-		exit_shell(envir);
-	else if (ft_strequ(excve, "env"))
+		exit_shell(envir, commands);
+	else if (ft_strequ(tab[0], "env"))
 		env_bultin(excve, envir);
 	else if (ft_strequ(tab[0], "unsetenv"))
 		unsetenv_builtin(excve, envir);
@@ -196,7 +197,7 @@ void 	parse_commands_built(char *excve, t_elem *envir)
 	ft_2dtabdel((void**)tab);
 }
 
-void parse_commands(char *commands, t_elem *envir)
+void parse_commands(char *commands, t_elem *envir, char **command)
 {
 	int 	i;
 	char	*excve;
@@ -207,7 +208,7 @@ void parse_commands(char *commands, t_elem *envir)
 	if (!commands[i])
 		return ;
 	excve = ft_strtrim(&commands[i]);
-	parse_commands_built(excve, envir);
+	parse_commands_built(excve, envir, command);
 	if (excve)
 	{
 		free(excve);
@@ -222,16 +223,17 @@ void	wait_input(t_elem *envir)
 	int 	i;
 
 	commands = NULL;
-	if (get_next_line(STDIN_FILENO, &line) <= 0)
+	if (get_next_line(0, &line) <= 0)
 		return ;
 	i = 0;
 	if (line)
 	{
 		commands = ft_strsplit(line, ';');
+		free(line);
 		while(commands[i])
-			parse_commands(commands[i++], envir);
-	}
-	free(line);
-	if (commands)
+			parse_commands(commands[i++], envir, commands);
 		ft_2dtabdel((void **)commands);
+	}
+	else
+		free(line);
 }
